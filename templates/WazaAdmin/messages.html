@@ -1,0 +1,14 @@
+
+{% extends "admin/base_site.html" %}
+{% load unicorn %}
+{% block title %}Custom Admin View{% endblock %}
+
+{% block content %}
+{% unicorn_scripts %}
+<div class="custom-admin-view">
+    <h1>This is a custom view in the Django admin.</h1>
+
+    {% unicorn 'message-manager' %}
+  
+</div>
+{% endblock %}

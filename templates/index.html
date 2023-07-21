@@ -1,0 +1,83 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block extrastyle %}{{ block.super }}
+<link rel="stylesheet" href="{% static " admin/css/dashboard.css" %}">{% endblock %}
+
+{% block coltype %}colMS{% endblock %}
+
+{% block bodyclass %}{{ block.super }} dashboard{% endblock %}
+
+{% block nav-breadcrumbs %}{% endblock %}
+
+{% block nav-sidebar %}{% endblock %}
+
+{% block content %}
+<div id="content-main">
+  {% include "admin/app_list.html" with app_list=app_list show_changelinks=True %}
+</div>
+{% endblock %}
+
+
+
+{% block sidebar %}
+
+<div id="content-related" class="dark:bg-zinc-800" }>
+ 
+
+<div class="w-full bg-white rounded-lg shadow dark:bg-zinc-800 dark:border-gray-700">
+
+
+
+
+    <template x-if="page=='history'">
+        <div class="module" id="recent-actions-module">
+            <h2>{% translate 'Recent actions' %}</h2>
+            <h3>{% translate 'My actions' %}</h3>
+            {% load log %}
+            {% get_admin_log 10 as admin_log for_user user %}
+            {% if not admin_log %}
+            <p>{% translate 'None available' %}</p>
+            {% else %}
+            <ul class="actionlist">
+                {% for entry in admin_log %}
+                <li
+                    class="{% if entry.is_addition %}addlink{% endif %}{% if entry.is_change %}changelink{% endif %}{% if entry.is_deletion %}deletelink{% endif %}">
+                    {% if entry.is_deletion or not entry.get_admin_url %}
+                    {{ entry.object_repr }}
+                    {% else %}
+                    <a href="{{ entry.get_admin_url }}">{{ entry.object_repr }}</a>
+                    {% endif %}
+                    <br>
+                    {% if entry.content_type %}
+                    <span class="mini quiet">{% filter capfirst %}{{ entry.content_type.name }}{% endfilter %}</span>
+                    {% else %}
+                    <span class="mini quiet">{% translate 'Unknown content' %}</span>
+                    {% endif %}
+                </li>
+                {% endfor %}
+            </ul>
+            {% endif %}
+        </div>
+    </template>
+
+    <template x-if="page=='user'">
+ 
+    <div class="w-full   bg-white  shadow dark:bg-zinc-800 ">
+        <div class="flex flex-col items-center pb-10 mt-4">
+            <img class="w-24 h-24 mb-3 rounded-full shadow-lg" src="{{user.profile_pic.url}}" alt="Bonnie image"/>
+            <h5 class="mb-1 text-xl font-medium text-gray-900 dark:text-white">{{user.username}}</h5>
+            <span class="text-sm text-gray-500 dark:text-gray-400">{{user.role}}</span>
+            <div class="flex mt-4 space-x-3 md:mt-6">
+                <a href="#" class="inline-flex items-center px-4 py-2 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Action 1</a>
+                <a href="#" class="inline-flex items-center px-4 py-2 text-sm font-medium text-center text-gray-900 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-gray-200 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-700 dark:focus:ring-gray-700">Action 2</a>
+            </div>
+        </div>
+    </div>
+    
+        </template>
+</div>
+
+
+</div>
+{% endblock %}
